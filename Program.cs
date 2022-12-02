@@ -7,7 +7,7 @@ namespace CodingChallenge
     {
         static void Main(string[] args)
         {
-            
+           
             InfoStore infoStore = new InfoStore();
             createCatalysts(infoStore);
             Console.Title = "The marvellous Menagerie";
@@ -15,19 +15,20 @@ namespace CodingChallenge
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
 
-            byte x = 255;
-            byte y = 255;
-            byte z = 255;
-            byte w = 255;
+            int temperatrus = 255;
+            int irascribilis = 255;
+            int intelligentia = 255;
+            int chaos = 255;
 
 
-            (byte x, byte y, byte z, byte w) creatureTraits = CreatureCreator(x, y, z, w, infoStore);
+            (int x, int y, int z, int m) creatureTraits = CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
 
             while (true)
             {
 
                 Console.Clear();
-                Creature creature = new Creature(creatureTraits.x, creatureTraits.y, creatureTraits.z);
+                Console.WriteLine($"DEBUG This creature is {creatureTraits.x}, {creatureTraits.y}, {creatureTraits.z}, {creatureTraits.m}"); //TODO remove
+                Creature creature = new Creature(creatureTraits.x, creatureTraits.y, creatureTraits.z, creatureTraits.m);
                 Console.WriteLine($"({infoStore.storedCreatures.Count}) creatures stored.");
 
 
@@ -46,7 +47,7 @@ namespace CodingChallenge
         }
 
 
-        private static (byte x, byte y, byte z, byte w) CreatureCreator(byte temperatrus, byte irascribilis, byte intelligentia, byte chaos, InfoStore infoStore)
+        private static (int x, int y, int z, int m) CreatureCreator(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
         {
             /*infoStore.catalysts.Add("rock");
             foreach(string name in infoStore.catalysts)
@@ -96,37 +97,93 @@ namespace CodingChallenge
             */
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
-            Console.Clear();
-            Console.WriteLine("\n current levels:");
-            Console.WriteLine($" temperatrus: {temperatrus * 100 / 255}%");
-            Console.WriteLine($" irascribilis: {irascribilis * 100 / 255}%");
-            Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
-            Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
 
-            Console.WriteLine($" [{infoStore.catalysts[choice].name}] has been inserted into the socket.\n");
+            string[] steps = new String[] { "Turn left Value", "Turn middle Valve", "Turn right valve", "Inject Chaos", "Complete" };
+            int loopChoice = 0;
+            int x = (int)(infoStore.catalysts[choice].dataMap[0, 3] * 40);
+            int y = (int)(infoStore.catalysts[choice].dataMap[1, 3] * 40);
+            int z = (int)(infoStore.catalysts[choice].dataMap[2, 3] * 40);
 
-            byte x = 0;
-            byte y = 0;
-            byte z = 0;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("\n current levels:");
+                Console.WriteLine($" temperatrus: {temperatrus * 100 / 255}%");
+                Console.WriteLine($" irascribilis: {irascribilis * 100 / 255}%");
+                Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
+                Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
 
-
-            drawGauge(x);
-            drawGauge(y);
-            drawGauge(z);
-
-            Console.WriteLine($"Enter the next step");
-            input = Console.ReadLine() ?? "wait";
+                Console.WriteLine($" [{infoStore.catalysts[choice].name}] has been inserted into the socket.\n");
 
 
 
+                Console.WriteLine($"DEBUG: x{x},y{y},z{z}"); //TODO remove
+
+                drawGauge(x, 'α');
+                drawGauge(y, 'β');
+                drawGauge(z, 'δ');
+
+                Console.WriteLine($"\n\nIn front of you are three gauges. Under the gauges you see three valves.\nEnter your next step:\n");
+                //Console.WriteLine($"Turn left valve, turn middle valve, turn right valve, inject chaos.\n");
+
+
+
+                loopChoice = ConsoleHelper.MultipleChoice(false, true, steps);
+
+
+                Console.WriteLine($"\n\nYou have chosen to {steps[loopChoice]}.");
+
+                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 0]}");  //TODO remove
+                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 1]}");  //TODO remove
+                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 2]}");  //TODO remove
+
+                Console.ReadKey();
+
+
+                if (loopChoice == 0)
+                {  
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[0, 0]) * 20, 0, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[0, 1]) * 20, 0, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[0, 2]) * 20, 0, 255);
+                    temperatrus -= 5;
+                }
+
+                if (loopChoice == 1)
+                {
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[1, 0]) * 20, 0, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[1, 1]) * 20, 0, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[1, 2]) * 20, 0, 255);
+                    irascribilis -= 5;
+                }
+
+                if (loopChoice == 2)
+                {
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[2, 0]) * 20, 0, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[2, 1]) * 20, 0, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[2, 2]) * 20, 0, 255);
+                    intelligentia -= 5;
+                }
+
+                if (loopChoice == 3)
+                {
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[3, 0]) * 20, 0, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[3, 1]) * 20, 0, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[3, 2]) * 20, 0, 255);
+                    chaos -= 5;
+                }
+            } while (loopChoice != 4);
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("The machine engages...");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
+            int catalystType = infoStore.catalysts[choice].dataMap[3, 3];
             if (choice != 0) { infoStore.catalysts.Remove(infoStore.catalysts[choice]); }
-            return (255, 255, 255, 255);
+            return (x,y,z, catalystType);
 
         }
 
-
-        private static void drawGauge(byte reading)
+        private static void drawGauge(int reading, char label)
         {
             string slider = "[::]";
             string bar = "====";
@@ -152,7 +209,7 @@ namespace CodingChallenge
                     sb.Append(bar);
             }
 
-            Console.WriteLine($"    [{sb.ToString()}]");
+            Console.WriteLine($"    I [{sb.ToString()}] II {label}");
         }
 
 
@@ -191,10 +248,10 @@ namespace CodingChallenge
             string name = "nothing";
             string description = "The absence of anything.";
 
-            int[,] dataMap = new int[4, 3] {    { 1, -2, -2 },
-                                                { -2, 1, -2 },
-                                                { -2, -2, 1 },
-                                                { 1, 1, 1 } };
+            int[,] dataMap = new int[4, 4] {    { 1, -2, -3, 0},  //1st column controls x gauge, 2nd controls y gauge, 3rd controls z gauge
+                                                { -2, 1, -2, 0},  //bottom row is for chaos, 4th column are starting points for all three gauges.
+                                                { -3, -2, 1, 0},  //3,3 is an int to determine max type
+                                                { 1, 1, 1, 0} };  // (note the 4x4 grid is not related to math calculation, it's just a coincidence.
 
             Catalyst catalyst = new Catalyst(name, description, dataMap);
 
@@ -203,10 +260,34 @@ namespace CodingChallenge
             name = "a weathered grey slate pebble";
             description = "The stone is smooth and cold to the touch.";
 
-            dataMap = new int[4,3] {    { 1, -2, -3 },
-                                        { -3, 1, -2 },
-                                        { -3, -2, 1 },
-                                        { 1, 1, 1 } };
+            dataMap = new int[4,4] {    { 1, -2, -2, 0},
+                                        { 0, 1, -2, 1},
+                                        { -1, -2, 1, 0},
+                                        { 1, 1, 1, 1  } };
+
+            catalyst = new Catalyst(name, description, dataMap);
+
+            infoStore.catalysts.Add(catalyst);
+
+            name = "a sea-worn bleached bone";
+            description = "It is surprisingly light and heavily worn with a coarse texture.";
+
+            dataMap = new int[4, 4] {    { 1, 0, -2, 0},
+                                        { -2, 1, -2, 0},
+                                        { -1, 0, 1, 1},
+                                        { 1, 1, 1, 1  } };
+
+            catalyst = new Catalyst(name, description, dataMap);
+
+            infoStore.catalysts.Add(catalyst);
+
+            name = "a charred Oak bark strip";
+            description = "The charred end is sooty and crumbly.";
+
+            dataMap = new int[4, 4] {    { 1, 0, 0, 1},
+                                        { -1, 1, -1, 0},
+                                        { 0, 0, 1, 0},
+                                        { 1, 1, 1, 1  } };
 
             catalyst = new Catalyst(name, description, dataMap);
 
@@ -230,15 +311,9 @@ namespace CodingChallenge
             }
         }
 
-        public enum Species { Mammalia, Aves, Reptilia, Amphibia }
-        public enum Diet { Herbivore, Omnivore, Carnivore }
-        public enum Behaviour { Nocturnal, Diurnal, matutinal, vespertine } //night-active, day-active, morning-active, evening-active
+        
 
-        public enum FacialFeatures { eyes, ears, mouth, nose, teeth }
-        public enum BodyParts { Tail, Claws, Beak, Legs, Flippers }
-        public enum Textures { Smooth, Rough, Leathery, Bumpy, Soft, Velvety }
-        public enum Sizes { Winding, Stubby, Fat, Thin }
-        public enum Health { Vicious, Stunted, Healthy, Menacing, Frail }
+
 
 
 

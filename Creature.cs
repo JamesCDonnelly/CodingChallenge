@@ -22,7 +22,7 @@
 
             internal String creatureName { get; set; }
 
-            public Creature(int x, int y, int z)
+            public Creature(int x, int y, int z, int m)
             {
 
                 species = (Species)getRandomEnum(typeof(Species));
@@ -52,6 +52,16 @@
 
 
         }
+
+        public enum Species { Mammalia, Aves, Reptilia, Amphibia }
+        public enum Diet { Herbivore, Omnivore, Carnivore }
+        public enum Behaviour { Nocturnal, Diurnal, matutinal, vespertine } //night-active, day-active, morning-active, evening-active
+
+        public enum FacialFeatures { eyes, ears, mouth, nose, teeth }
+        public enum BodyParts { Tail, Claws, Beak, Legs, Flippers }
+        public enum Textures { Smooth, Rough, Leathery, Bumpy, Soft, Velvety }
+        public enum Sizes { Winding, Stubby, Fat, Thin }
+        public enum Health { Vicious, Stunted, Healthy, Menacing, Frail }
 
 
 
