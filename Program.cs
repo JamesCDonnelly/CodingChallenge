@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Text;
+using static CodingChallenge.Program;
 
 namespace CodingChallenge
 {
@@ -7,48 +9,42 @@ namespace CodingChallenge
     {
         static void Main(string[] args)
         {
-           
             InfoStore infoStore = new InfoStore();
             createCatalysts(infoStore);
             Console.Title = "The marvellous Menagerie";
-            Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Clear();
 
             int temperatrus = 255;
             int irascribilis = 255;
             int intelligentia = 255;
             int chaos = 255;
 
-
-            (int x, int y, int z, int m) creatureTraits = CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
-
             while (true)
             {
-
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Clear();
-                Console.WriteLine($"DEBUG This creature is {creatureTraits.x}, {creatureTraits.y}, {creatureTraits.z}, {creatureTraits.m}"); //TODO remove
-                Creature creature = new Creature(creatureTraits.x, creatureTraits.y, creatureTraits.z, creatureTraits.m);
-                Console.WriteLine($"({infoStore.storedCreatures.Count}) creatures stored.");
 
+                Console.WriteLine($"\nWhere should I go next?\n 1 - The Menagerie\n 2 - The Facility");
+                string? input = Console.ReadLine();
+                int selection = 1;
+                if (Int32.TryParse(input, out int i)) { selection = Math.Clamp(i, 1, 2); }
 
+                Console.WriteLine($"{selection}");
+                Console.ReadKey();
 
-                Console.WriteLine($"this creature most closely resembles the {creature.species} animal class.\nIt is a {creature.diet} and has a {creature.behaviour} sleeping pattern.");
-                Console.WriteLine($"Its {creature.sizes} {creature.colour} {creature.bodyParts} look {creature.textures} and {creature.health}.");
-                Console.WriteLine("\nDo you wish to keep this creature?");
-                String choice = Console.ReadLine() ?? "no";
-                if (choice == "yes") {
-                    nameCreature(creature);
-                    infoStore.storedCreatures.Add(creature);
-                    Console.WriteLine($"The creature has been stored");
-                }
-                else { infoStore.wildCreatures.Add(creature); }
+                //(int x, int y, int z, int m) creatureTraits = CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
+                CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
             }
         }
 
 
-        private static (int x, int y, int z, int m) CreatureCreator(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
+
+        private static void CreatureCreator(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
         {
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+
             /*infoStore.catalysts.Add("rock");
             foreach(string name in infoStore.catalysts)
             {
@@ -57,25 +53,29 @@ namespace CodingChallenge
 
 
             Console.WriteLine("Let's create a Creature.\n");
-            Console.WriteLine("Your levels of temperatrus are plentiful\n" +
-                                "Your levels of irascibilis are plentiful\n" +
-                                "Your levels of intelligentia are plentiful\n" +
-                                "You have several quantities of chaos left.");
+            Console.WriteLine(  "   My levels of temperatrus are plentiful\n" +
+                                "   My levels of irascibilis are plentiful\n" +
+                                "   My levels of intelligentia are plentiful\n" +
+                                "   I have several quantities of chaos left.");
 
 
 
-            Console.WriteLine("\nchoose which catalyst to set:\n");
+            Console.WriteLine("\n I should choose which catalyst to set:\n");
             for (int j = 0; j < infoStore.catalysts.Count; j++)
             {
                 Console.WriteLine($"{j + 1} - {infoStore.catalysts[j].name}");
             }
 
-            int choice = 1;
+            int choice = 0;
             string input = Console.ReadLine() ?? "1";
-            if (Int32.TryParse(input, out int i)) { choice = i - 1; }
+            if (Int32.TryParse(input, out int i)) { choice = Math.Abs(i)-1; } //abs to remove negative numbers and break choice, -1 to match 0 base
+
+
+            if (choice > infoStore.catalysts.Count) { choice = 0;  };
+
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine($"\nYou have chosen, {infoStore.catalysts[choice].name}.");
+            Console.WriteLine($"\nI have chosen, {infoStore.catalysts[choice].name}.");
             
 
             /*
@@ -100,9 +100,9 @@ namespace CodingChallenge
 
             string[] steps = new String[] { "Turn left Value", "Turn middle Valve", "Turn right valve", "Inject Chaos", "Complete" };
             int loopChoice = 0;
-            int x = (int)(infoStore.catalysts[choice].dataMap[0, 3] * 40);
-            int y = (int)(infoStore.catalysts[choice].dataMap[1, 3] * 40);
-            int z = (int)(infoStore.catalysts[choice].dataMap[2, 3] * 40);
+            int x = Math.Clamp((infoStore.catalysts[choice].dataMap[0, 3] * 40), 1, 255);
+            int y = Math.Clamp((infoStore.catalysts[choice].dataMap[1, 3] * 40), 1, 255);
+            int z = Math.Clamp((infoStore.catalysts[choice].dataMap[2, 3] * 40), 1, 255);
 
             do
             {
@@ -123,7 +123,7 @@ namespace CodingChallenge
                 drawGauge(y, 'β');
                 drawGauge(z, 'δ');
 
-                Console.WriteLine($"\n\nIn front of you are three gauges. Under the gauges you see three valves.\nEnter your next step:\n");
+                Console.WriteLine($"\n\n In front of me I see three gauges. Under these gauges I can see three valves.\n I should select my next step:\n    ");
                 //Console.WriteLine($"Turn left valve, turn middle valve, turn right valve, inject chaos.\n");
 
 
@@ -131,46 +131,46 @@ namespace CodingChallenge
                 loopChoice = ConsoleHelper.MultipleChoice(false, true, steps);
 
 
-                Console.WriteLine($"\n\nYou have chosen to {steps[loopChoice]}.");
-
-                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 0]}");  //TODO remove
-                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 1]}");  //TODO remove
-                Console.WriteLine($"DEBUG {infoStore.catalysts[choice].dataMap[0, 2]}");  //TODO remove
+                Console.WriteLine($"\n\nI have chosen to {steps[loopChoice]}.");
 
                 Console.ReadKey();
 
 
+
+                //TODO revise into single method
+
                 if (loopChoice == 0)
                 {  
-                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[0, 0]) * 20, 0, 255);
-                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[0, 1]) * 20, 0, 255);
-                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[0, 2]) * 20, 0, 255);
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[0, 0]) * 20, 1, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[0, 1]) * 20, 1, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[0, 2]) * 20, 1, 255);
                     temperatrus -= 5;
                 }
 
                 if (loopChoice == 1)
                 {
-                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[1, 0]) * 20, 0, 255);
-                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[1, 1]) * 20, 0, 255);
-                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[1, 2]) * 20, 0, 255);
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[1, 0]) * 20, 1, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[1, 1]) * 20, 1, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[1, 2]) * 20, 1, 255);
                     irascribilis -= 5;
                 }
 
                 if (loopChoice == 2)
                 {
-                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[2, 0]) * 20, 0, 255);
-                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[2, 1]) * 20, 0, 255);
-                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[2, 2]) * 20, 0, 255);
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[2, 0]) * 20, 1, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[2, 1]) * 20, 1, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[2, 2]) * 20, 1, 255);
                     intelligentia -= 5;
                 }
 
                 if (loopChoice == 3)
                 {
-                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[3, 0]) * 20, 0, 255);
-                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[3, 1]) * 20, 0, 255);
-                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[3, 2]) * 20, 0, 255);
+                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[3, 0]) * 20, 1, 255);
+                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[3, 1]) * 20, 1, 255);
+                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[3, 2]) * 20, 1, 255);
                     chaos -= 5;
                 }
+
             } while (loopChoice != 4);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -179,8 +179,31 @@ namespace CodingChallenge
             Console.ReadKey();
             int catalystType = infoStore.catalysts[choice].dataMap[3, 3];
             if (choice != 0) { infoStore.catalysts.Remove(infoStore.catalysts[choice]); }
-            return (x,y,z, catalystType);
+            //return (x,y,z, catalystType);
 
+            //while (true)
+            //{
+
+                Console.Clear();
+                Console.WriteLine($"DEBUG This creature is {x}, {y}, {z}, {catalystType}"); //TODO remove
+                Creature creature = new Creature(x, y, z, catalystType);
+                Console.WriteLine($"({infoStore.storedCreatures.Count}) creatures stored.");
+
+
+
+                Console.WriteLine($"this creature most closely resembles the {creature.species} animal class.\nIt is a {creature.diet} and has a {creature.behaviour} sleeping pattern.");
+                Console.WriteLine($"Its {creature.sizes} {creature.colour} {creature.bodyParts} look {creature.textures} and {creature.health}.");
+                Console.WriteLine("\nDo you wish to keep this creature?");
+                input = Console.ReadLine() ?? "no";
+                if (input == "yes")
+                {
+                    nameCreature(creature);
+                    infoStore.storedCreatures.Add(creature);
+                    Console.WriteLine($"The creature has been stored");
+                    Console.ReadKey();
+                }
+                else { infoStore.wildCreatures.Add(creature); }
+           // }
         }
 
         private static void drawGauge(int reading, char label)
@@ -250,7 +273,7 @@ namespace CodingChallenge
 
             int[,] dataMap = new int[4, 4] {    { 1, -2, -3, 0},  //1st column controls x gauge, 2nd controls y gauge, 3rd controls z gauge
                                                 { -2, 1, -2, 0},  //bottom row is for chaos, 4th column are starting points for all three gauges.
-                                                { -3, -2, 1, 0},  //3,3 is an int to determine max type
+                                                { -3, -2, 1, 0},  //(3,3) is an int to determine max type
                                                 { 1, 1, 1, 0} };  // (note the 4x4 grid is not related to math calculation, it's just a coincidence.
 
             Catalyst catalyst = new Catalyst(name, description, dataMap);
