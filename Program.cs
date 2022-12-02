@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Serialization;
 
 namespace CodingChallenge
 {
-    internal class Program
+    internal partial class Program
     {
-
-
-
-
         static void Main(string[] args)
         {
-            StorageCollection infoStore = new StorageCollection();
+            
+            InfoStore infoStore = new InfoStore();
+            createCatalysts(infoStore);
+            Console.Title = "The marvellous Menagerie";
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
@@ -30,7 +25,7 @@ namespace CodingChallenge
 
             while (true)
             {
-                
+
                 Console.Clear();
                 Creature creature = new Creature(creatureTraits.x, creatureTraits.y, creatureTraits.z);
                 Console.WriteLine($"({infoStore.storedCreatures.Count}) creatures stored.");
@@ -51,35 +46,36 @@ namespace CodingChallenge
         }
 
 
-        private static (byte x, byte y, byte z, byte w) CreatureCreator(byte temperatrus, byte irascribilis, byte intelligentia, byte chaos, StorageCollection infoStore)
+        private static (byte x, byte y, byte z, byte w) CreatureCreator(byte temperatrus, byte irascribilis, byte intelligentia, byte chaos, InfoStore infoStore)
         {
             /*infoStore.catalysts.Add("rock");
             foreach(string name in infoStore.catalysts)
             {
                 Console.WriteLine($"{name}");
             }*/
-            
+
 
             Console.WriteLine("Let's create a Creature.\n");
             Console.WriteLine("Your levels of temperatrus are plentiful\n" +
                                 "Your levels of irascibilis are plentiful\n" +
                                 "Your levels of intelligentia are plentiful\n" +
-                                "Your levels of chaos are plentiful");
+                                "You have several quantities of chaos left.");
 
 
 
             Console.WriteLine("\nchoose which catalyst to set:\n");
             for (int j = 0; j < infoStore.catalysts.Count; j++)
             {
-                Console.WriteLine($"{j+1} - {infoStore.catalysts[j]}");
+                Console.WriteLine($"{j + 1} - {infoStore.catalysts[j].name}");
             }
 
             int choice = 1;
             string input = Console.ReadLine() ?? "1";
-            if (Int32.TryParse(input, out int i)) { choice = i-1; }
+            if (Int32.TryParse(input, out int i)) { choice = i - 1; }
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine($"\nYou have chosen, {infoStore.catalysts[choice]}.");
+            Console.WriteLine($"\nYou have chosen, {infoStore.catalysts[choice].name}.");
+            
 
             /*
             switch (choice)
@@ -107,7 +103,7 @@ namespace CodingChallenge
             Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
             Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
 
-            Console.WriteLine($" [{infoStore.catalysts[choice]}] has been inserted into the socket.\n");
+            Console.WriteLine($" [{infoStore.catalysts[choice].name}] has been inserted into the socket.\n");
 
             byte x = 0;
             byte y = 0;
@@ -124,6 +120,7 @@ namespace CodingChallenge
 
 
             Console.ReadKey();
+            if (choice != 0) { infoStore.catalysts.Remove(infoStore.catalysts[choice]); }
             return (255, 255, 255, 255);
 
         }
@@ -174,72 +171,62 @@ namespace CodingChallenge
                 else { nameCreature(creature); }
             }
         }
-
-        public class Creature
+        public class Catalyst
         {
-            public Species species { get; }
-            public Diet diet { get; }
-            public Behaviour behaviour { get; }
+            public string name { get; } = "missingNo";
+            public string description { get; } = "desc";
+            public int[,] dataMap { get; }
 
-            public FacialFeatures facialFeatures { get; }
-
-            public BodyParts bodyParts { get; }
-
-            public ConsoleColor colour { get; }
-
-            public Sizes sizes { get; }
-
-            public Health health { get; }
-
-            public Textures textures { get; }
-
-            internal String creatureName { get; set; }
-
-            public Creature(int x, int y, int z)
+            public Catalyst(string name, string description, int[,] dataMap)
             {
-
-                species = (Species)getRandomEnum(typeof(Species));
-                diet = (Diet)getRandomEnum(typeof(Diet));
-                behaviour = (Behaviour)getRandomEnum(typeof(Behaviour));
-                bodyParts = (BodyParts)getRandomEnum(typeof(BodyParts));
-                colour = (ConsoleColor)getRandomEnum(typeof(ConsoleColor));
-                sizes = (Sizes)getRandomEnum(typeof(Sizes));
-                health = (Health)getRandomEnum(typeof(Health));
-                textures = (Textures)getRandomEnum(typeof(Textures));
-
-                creatureName = "creature";
-
+                this.name = name;
+                this.description = description;
+                this.dataMap = dataMap;
             }
-
-            private int getRandomEnum(Type type)
-            {
-                Random rnd = new Random();
-                return rnd.Next(Enum.GetNames(type).Length);
-            }
-
-            public void nameCreature(string input)
-            {
-                creatureName = input;
-            }
-
-
 
         }
 
-        public class StorageCollection
+        public static void createCatalysts(InfoStore infoStore)
+        {
+            string name = "nothing";
+            string description = "The absence of anything.";
+
+            int[,] dataMap = new int[4, 3] {    { 1, -2, -2 },
+                                                { -2, 1, -2 },
+                                                { -2, -2, 1 },
+                                                { 1, 1, 1 } };
+
+            Catalyst catalyst = new Catalyst(name, description, dataMap);
+
+            infoStore.catalysts.Add(catalyst); 
+            
+            name = "a weathered grey slate pebble";
+            description = "The stone is smooth and cold to the touch.";
+
+            dataMap = new int[4,3] {    { 1, -2, -3 },
+                                        { -3, 1, -2 },
+                                        { -3, -2, 1 },
+                                        { 1, 1, 1 } };
+
+            catalyst = new Catalyst(name, description, dataMap);
+
+            infoStore.catalysts.Add(catalyst);
+        }
+
+        public class InfoStore
         {
             public List<Creature> storedCreatures { get; set; }
             public List<Creature> wildCreatures { get; set; }
 
-            public List<string> catalysts  {get; set;}
+            public List<Catalyst> catalysts  {get; set;}
 
-            public StorageCollection()
+            public InfoStore()
             {
                 storedCreatures = new List<Creature>();
                 wildCreatures = new List<Creature>();
-                catalysts = new List<string>();
-                string[] initialCatalysts = new string[] { "nothing", "a weathered grey slate pebble", "a sea-worn bleached bone", "a charred Oak bark strip" };
-                catalysts.AddRange(initialCatalysts);
+                catalysts = new List<Catalyst>();
+                //string[] initialCatalysts = new string[] { "nothing", "a weathered grey slate pebble", "a sea-worn bleached bone", "a charred Oak bark strip" };
+                //catalysts.AddRange(initialCatalysts);
             }
         }
 
