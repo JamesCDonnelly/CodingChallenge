@@ -32,7 +32,7 @@ namespace CodingChallenge
             public Creature(int x, int y, int z, int m)  //values from 0 to 255 and 0 - 4
             {
                 float i = (x / 255f * 10f * m);
-                Console.WriteLine($"{(int)i}");
+                //Console.WriteLine($"{(int)i}");
                 species = (Species) Math.Clamp((int)(x/255f * 10f * m), 0, Enum.GetNames(typeof(Species)).Length - 1);
                 diet = (Diet)Math.Clamp((int)(y/255f * 10f * m), 0, Enum.GetNames(typeof(Diet)).Length - 1);
                 behaviour = (Behaviour)(getRandomEnum(typeof(Behaviour)));
@@ -45,7 +45,7 @@ namespace CodingChallenge
                 noises = (Noises)(getRandomEnum(typeof(Noises)) * m);
                 cries = (Cries)(getRandomEnum(typeof(Cries)) * m);
 
-                creatureName = "creature";
+                creatureName = "unnamed";
 
             }
 
@@ -66,15 +66,15 @@ namespace CodingChallenge
         }
 
         public enum Species { Abomination, Osteichthyes, Amphibia, Mammalia, Aves, Reptilia}
-        public enum Diet { Carnivore, Omnivore, Herbivore }
-        public enum Behaviour { matutinal, Diurnal,vespertine, Nocturnal } //morning-active, day-active, evening-active, night-active
-        public enum Senses { temperature, vision, smell, vibration, noise, emotion}
+        public enum Diet { carnivorous, omnivorous, herbivorous }
+        public enum Behaviour { matutinal, diurnal,vespertine, nocturnal } //morning-active, day-active, evening-active, night-active
+        public enum Senses { temperature, sight, smell, vibration, hearing, emotion, gravity, humidity}
         public enum BodyParts { limbs, tail, claws, beak, legs, flippers, arms, antennae, proboscis, hairs, tendrils }
         public enum Textures { slimy, smooth, rough, leathery, bumpy, soft, velvety  }
         public enum Sizes { gelatinous, winding, stubby, fat, thin, spindly }
         public enum Health { pulsating, vicious, stunted, frail, healthy, menacing }
-        public enum Noises { burbling, callous, terrifying, thunderous, hideous, earsplitting, charismatic, friendly, bellowing}
-        public enum Cries { noise, shout, whisper, scream, roar, shriek, whistle, song, cry}
+        public enum Noises { burbling, callous, terrifying, thunderous, hideous, earsplitting, charismatic, friendly, bellowing, ghastly}
+        public enum Cries { noise, shout, whisper, scream, roar, shriek, whistle, song, cry, laugh, whine, whimper}
 
 
 

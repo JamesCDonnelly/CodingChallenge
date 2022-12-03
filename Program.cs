@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Linq.Expressions;
 using System.Text;
 using static CodingChallenge.Program;
 
@@ -29,15 +30,100 @@ namespace CodingChallenge
                 int selection = 1;
                 if (Int32.TryParse(input, out int i)) { selection = Math.Clamp(i, 1, 2); }
 
-                Console.WriteLine($"{selection}");
-                Console.ReadKey();
+                switch(selection)
+                {
+                    case 1:
+                        Menagerie(infoStore);
+                        break;
+                    case 2:
+                        
+                        CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
+                        break;
+                }
+                //Console.WriteLine($"{selection}");
+                //Console.ReadKey();
 
                 //(int x, int y, int z, int m) creatureTraits = CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
-                CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
+                
             }
         }
 
+        private static void Menagerie(InfoStore infoStore)
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Clear();
+            if (infoStore.storedCreatures.Count == 0) { Console.WriteLine($"Currently there are no creatures stored at the menagerie."); Console.ReadKey(); return; }
+            else
+            {
+                if (infoStore.storedCreatures.Count == 1) { Console.WriteLine($"Currently there is {infoStore.storedCreatures.Count} creature stored at the menagerie."); }
+                else { Console.WriteLine($"Currently there are {infoStore.storedCreatures.Count} creatures stored at the menagerie."); }
+                Console.ReadKey();
+                viewCreatures(infoStore);
+            }
+        }
 
+        private static void viewCreatures(InfoStore infoStore)
+        {
+            int index = 0;
+            bool visit = true;
+            while (visit)
+            {
+                Console.BackgroundColor = ConsoleColor.DarkGray;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Clear();
+
+                //Console.WriteLine($"DEBUG {index}");
+                //Console.WriteLine($"DEBUG storecreatures count {infoStore.storedCreatures.Count}");
+
+                Creature creature = infoStore.storedCreatures[index];
+                Console.Write($"[PEN: {index + 1}]");
+                Console.Write($"\nThis creature is {creature.creatureName}.\n\n This creature most closely resembles species from the {creature.species} animal class.\n" +
+                                  $" It is {creature.diet} and has a {creature.behaviour} sleeping pattern.\n" +
+                                  $" Its {creature.sizes} {creature.colour} {creature.bodyParts} appears {creature.textures} and {creature.health}.\n\n" +
+                                  $" It can detect other presences using its strong sense of {creature.senses}.");
+                Random rnd = new Random();
+                if (rnd.Next(1, 10) == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write($" It can detect you now.\n\n   ");
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine($" It calls out with a {creature.noises} {creature.cries}.\n\n");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                }
+                else
+                {
+
+                    Console.WriteLine($"\n The creature cannot detect you right now, you should come back later.\n\n");
+                }
+
+                string[] steps = new String[] { "Next", "Previous", "Rename", "Leave" };
+                int loopChoice = 0;
+                loopChoice = ConsoleHelper.MultipleChoice(true, true, 14, steps);
+
+                switch (loopChoice)
+                {
+                    case 0:
+                        index++;
+                        if (index > infoStore.storedCreatures.Count - 1) { index = 0; }
+                        break;
+                    case 1:
+                        index--;
+                        if (index < 0) { index = infoStore.storedCreatures.Count-1; }
+                        break;
+                    case 2:
+                        Console.Clear();
+                        nameCreature(creature);
+                        break;
+                    default:
+                        visit = !visit;
+                        break;
+                }
+            }
+
+        }
 
         private static void CreatureCreator(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
         {
@@ -98,7 +184,7 @@ namespace CodingChallenge
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
 
-            string[] steps = new String[] { "Turn left Value", "Turn middle Valve", "Turn right valve", "Inject Chaos", "Complete" };
+            string[] steps = new String[] { "Turn the left Valve", "Turn the middle Valve", "Turn the right valve", "Inject Chaos", "Pull the lever" };
             int loopChoice = 0;
             int x = Math.Clamp((infoStore.catalysts[choice].dataMap[0, 3] * 40), 1, 255);
             int y = Math.Clamp((infoStore.catalysts[choice].dataMap[1, 3] * 40), 1, 255);
@@ -113,22 +199,27 @@ namespace CodingChallenge
                 Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
                 Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
 
-                Console.WriteLine($" [{infoStore.catalysts[choice].name}] has been inserted into the socket.\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(" [");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"{infoStore.catalysts[choice].name}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"] has been inserted into the socket.\n");
 
 
 
-                Console.WriteLine($"DEBUG: x{x},y{y},z{z}"); //TODO remove
+                //Console.WriteLine($"DEBUG: x{x},y{y},z{z}"); //TODO remove
 
                 drawGauge(x, 'α');
                 drawGauge(y, 'β');
                 drawGauge(z, 'δ');
 
-                Console.WriteLine($"\n\n In front of me I see three gauges. Under these gauges I can see three valves.\n I should select my next step:\n    ");
+                Console.WriteLine($"\n\n In front of me I see three gauges. Under these gauges I can see three valves. To my right there is a lever.\n I should select my next step:\n    ");
                 //Console.WriteLine($"Turn left valve, turn middle valve, turn right valve, inject chaos.\n");
 
 
 
-                loopChoice = ConsoleHelper.MultipleChoice(false, true, steps);
+                loopChoice = ConsoleHelper.MultipleChoice(false, true, 24, steps);
 
 
                 Console.WriteLine($"\n\nI have chosen to {steps[loopChoice]}.");
@@ -140,11 +231,15 @@ namespace CodingChallenge
                 //TODO revise into single method
 
                 if (loopChoice == 0)
-                {  
-                    x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[0, 0]) * 20, 1, 255);
-                    y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[0, 1]) * 20, 1, 255);
-                    z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[0, 2]) * 20, 1, 255);
-                    temperatrus -= 5;
+                {
+                    if (temperatrus < 5) { Console.WriteLine($"no more temperatrus can be released."); Console.ReadKey(); }
+                    else
+                    {
+                        x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[0, 0]) * 20, 1, 255);
+                        y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[0, 1]) * 20, 1, 255);
+                        z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[0, 2]) * 20, 1, 255);
+                        temperatrus -= 5;
+                    }
                 }
 
                 if (loopChoice == 1)
@@ -184,30 +279,55 @@ namespace CodingChallenge
             //while (true)
             //{
 
-                Console.Clear();
-                Console.WriteLine($"DEBUG This creature is {x}, {y}, {z}, {catalystType}"); //TODO remove
-                Creature creature = new Creature(x, y, z, catalystType);
-                Console.WriteLine($"({infoStore.storedCreatures.Count}) creatures stored.");
+            Console.Clear();
+            //Console.WriteLine($"DEBUG This creature is {x}, {y}, {z}, {catalystType}"); //TODO remove
+            Creature creature = new Creature(x, y, z, catalystType);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"\n    ...A creature emerges from the machine.\n");
+            Console.ForegroundColor = ConsoleColor.White;
 
 
-
-                Console.WriteLine($"this creature most closely resembles the {creature.species} animal class.\nIt is a {creature.diet} and has a {creature.behaviour} sleeping pattern.");
-                Console.WriteLine($"Its {creature.sizes} {creature.colour} {creature.bodyParts} look {creature.textures} and {creature.health}.");
-                Console.WriteLine("\nDo you wish to keep this creature?");
+            Console.WriteLine($" this creature most closely resembles the {creature.species} animal class.\n It is {creature.diet} and has a {creature.behaviour} sleeping pattern.");
+            Console.WriteLine($" Its {creature.sizes} {creature.colour} {creature.bodyParts} appears {creature.textures} and {creature.health}.");
+            bool loop = true;
+            while (loop)
+            {
+                Console.WriteLine("\n Should I keep this creature?");
                 input = Console.ReadLine() ?? "no";
-                if (input == "yes")
+                if (input.ToLower() == "yes")
                 {
                     nameCreature(creature);
                     infoStore.storedCreatures.Add(creature);
-                    Console.WriteLine($"The creature has been stored");
+                    Console.WriteLine($" I will move this creature to the menagerie.");
                     Console.ReadKey();
+                    loop = !loop;
                 }
-                else { infoStore.wildCreatures.Add(creature); }
+                else
+                {
+                    Console.WriteLine($" I don't want to keep this creature.\n Should I will release it?");
+                    input = Console.ReadLine() ?? "no";
+                    if (input.ToLower() == "yes")
+                    {
+                        Console.WriteLine($" I have released this creature into the wild.\n     ");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.WriteLine($"The creature will remember you.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ReadKey();
+                        infoStore.wildCreatures.Add(creature);
+                        loop=!loop;
+                    }
+
+                }
+            }
            // }
         }
 
         private static void drawGauge(int reading, char label)
         {
+            int gaugeLength = 10; //control length of gauge and determines possible slider positions
+            int gaugeTuning = 10; //control increments to test slider on
             string slider = "[::]";
             string bar = "====";
 
@@ -215,7 +335,7 @@ namespace CodingChallenge
             if (sum <= 0) { sum = 1; }
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i <= 5; ++i)
+            for (int i = 1; i <= gaugeLength; ++i)
             {
                 /*
                 int A = reading * 100 / 255;
@@ -226,28 +346,28 @@ namespace CodingChallenge
                 
                 Console.WriteLine($"{A} {B} : {C} {D}");
                 */
-                if ((sum >= i * 20 - 19) && (sum <= i * 20))
+                if ((sum >= i * gaugeTuning - ( gaugeTuning - 1)) && (sum <= i * gaugeTuning))
                     sb.Append(slider);
                 else
                     sb.Append(bar);
             }
 
-            Console.WriteLine($"    I [{sb.ToString()}] II {label}");
+            Console.WriteLine($"\n    I [{sb.ToString()}] II {label}");
         }
 
 
 
         private static void nameCreature(Creature creature)
         {
-            Console.WriteLine("would you like to name this creature?");
+            Console.WriteLine(" Should I name this creature?");
             String choice = Console.ReadLine() ?? "no";
-            if (choice == "yes")
+            if (choice.ToLower() == "yes")
             {
-                Console.WriteLine("Please provide a name");
+                Console.WriteLine(" I need to provide a name");
                 string name = Console.ReadLine() ?? "creature";
-                Console.WriteLine($"Are you happy to name this creature {name}?");
+                Console.WriteLine($" Is {name} a good name?");
                 String confirmation = Console.ReadLine() ?? "no";
-                if (confirmation == "yes") { creature.nameCreature(name); }
+                if (confirmation.ToLower() == "yes") { creature.creatureName = name; }
                 else { nameCreature(creature); }
             }
         }
