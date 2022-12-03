@@ -9,7 +9,6 @@ namespace CodingChallenge
             public static int MultipleChoice(bool canCancel, bool variableSpacing, int spacing, params string[] options)
             {
                 (int startX, int startY) = Console.GetCursorPosition();
-                //const int startY = 8;
                 const int optionsPerLine = 5;
                  int spacingPerLine = spacing;
                 //int variableSpacingPerLine = (options.OrderByDescending(s => s.Length).First()).Length; //added
@@ -31,20 +30,10 @@ namespace CodingChallenge
                     {
                         Console.SetCursorPosition(startX + (i % optionsPerLine) * spacingPerLine, startY + i / optionsPerLine);
 
-                        if (i == currentSelection)
-                        { 
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            //Console.BackgroundColor = ConsoleColor.DarkGreen;
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            //Console.BackgroundColor = ConsoleColor.DarkGreen;
-                        }
+                        if (i == currentSelection) { Console.ForegroundColor = ConsoleColor.Yellow; }
+                        else { Console.ForegroundColor = ConsoleColor.White; }
 
                         Console.Write($"[{options[i]}]");
-
-                        //Console.ResetColor();
                     }
 
                     key = Console.ReadKey(true).Key;
@@ -85,13 +74,8 @@ namespace CodingChallenge
                 } while (key != ConsoleKey.Enter);
 
                 Console.CursorVisible = true;
-
                 return currentSelection;
             }
         }
-
-
-
     }
-
 }
