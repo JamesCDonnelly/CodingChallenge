@@ -7,14 +7,23 @@ namespace CodingChallenge
 	{
         internal static void CreatureCreator(InfoStore infoStore)
         {
-
+            string input;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
 
             Console.WriteLine("Let's create a Creature.\n");
-
+            if(!infoStore.storedCreatures.Any() && !infoStore.wildCreatures.Any())
+            {
+                Console.WriteLine("This appears to be the first time you have tried to create a creature, do you want a tutorial?");
+                input = Console.ReadLine() ?? "no";
+                if (input.ToLower() == "yes")
+                    DialogueHandler.Tutorial();
+            }
+            
+            Console.Clear();
             string[] amountDescription = new string[] { "exhusted", "poor", "middling", "adaquate", "plentiful", "brimming" };
+            Console.WriteLine("\n");
             foreach (Reagent reagent in infoStore.reagent)
             {
                 int descriptionValue = 0;
@@ -23,7 +32,6 @@ namespace CodingChallenge
                 else
                 {
                     descriptionValue = (int)Math.Ceiling((decimal)(reagent.quantity * 100 / 255) / 25);
-                    //Console.WriteLine($"{Math.Ceiling((decimal)(reagent.quantity * 100 / 255) / 25)}");
 
                 }
                 Console.WriteLine($"   My levels of {reagent.name} are {amountDescription[descriptionValue]}.");
@@ -41,7 +49,7 @@ namespace CodingChallenge
             }
 
             int choice = 0;
-            string input = Console.ReadLine() ?? "1";
+            input = Console.ReadLine() ?? "1";
             if (Int32.TryParse(input, out int i)) { choice = Math.Abs(i) - 1; } //abs to remove negative numbers and break choice, -1 to match 0 base
 
             if (choice > infoStore.catalysts.Count) { choice = 0; };
@@ -112,7 +120,7 @@ namespace CodingChallenge
             Console.ForegroundColor = ConsoleColor.White;
 
             Console.WriteLine($" this creature most closely resembles the {creature.species} animal class.\n It is {creature.diet} and has a {creature.behaviour} sleeping pattern.");
-            Console.WriteLine($" Its {creature.sizes} {creature.colour} {creature.bodyParts} appears {creature.textures} and {creature.health}.");
+            Console.WriteLine($" Its {creature.sizes} {creature.colour.ToString().ToLower()} {creature.bodyParts} appears {creature.textures} and {creature.health}.");
             bool loop = true;
             while (loop)
             {

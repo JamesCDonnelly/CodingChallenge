@@ -9,11 +9,11 @@ namespace CodingChallenge
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Clear();
-            if (infoStore.storedCreatures.Count == 0) { Console.WriteLine($"Currently there are no creatures stored at the menagerie."); Console.ReadKey(); return; }
+            if (infoStore.storedCreatures.Count == 0) { Console.WriteLine($"\n\n    Currently there are no creatures stored at the menagerie."); Console.ReadKey(); return; }
             else
             {
-                if (infoStore.storedCreatures.Count == 1) { Console.WriteLine($"Currently there is {infoStore.storedCreatures.Count} creature stored at the menagerie."); }
-                else { Console.WriteLine($"Currently there are {infoStore.storedCreatures.Count} creatures stored at the menagerie."); }
+                if (infoStore.storedCreatures.Count == 1) { Console.WriteLine($"\n\n    Currently there is {infoStore.storedCreatures.Count} creature stored at the menagerie."); }
+                else { Console.WriteLine($"\n\n     Currently there are {infoStore.storedCreatures.Count} creatures stored at the menagerie."); }
                 Console.ReadKey();
                 viewCreatures(infoStore);
             }
@@ -41,7 +41,7 @@ namespace CodingChallenge
                                   $" It can detect other presences using its strong sense of {creature.senses}.");
 
                 Random rnd = new Random();
-                if (rnd.Next(1, 7) == 3)
+                if (rnd.Next(1, 5) == 3)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write($" It can detect you now.\n\n   ");

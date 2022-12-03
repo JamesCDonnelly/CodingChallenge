@@ -1,4 +1,6 @@
-﻿namespace CodingChallenge
+﻿using System.Reflection;
+
+namespace CodingChallenge
 {
     internal partial class Program
     {
@@ -9,6 +11,7 @@
             createCatalysts(infoStore);
             createReagents(infoStore);
             Console.Title = "The marvellous Menagerie";
+            DialogueHandler.Intro();
 
             while (true)
             {
@@ -17,8 +20,9 @@
                 Console.Clear();
 
                 if (debug) { Console.WriteLine("[Debug enabled]\n"); }
-
-                Console.WriteLine($"\nWhere should I go next?\n 1 - The Menagerie\n 2 - The Facility \n 3 - Leave");
+                Console.WriteLine($"\n\n Ahead of me lies a vast field of enclosures and habitats. To my right a short gray building.\n" +
+                    $" A rusted sign hangs over the door to this building. It's barely legible but I think it says The Facility.\n");
+                Console.WriteLine($"\n  Where should I go next?\n\n 1 - The Menagerie\n 2 - The Facility \n 3 - Leave");
                 string? input = Console.ReadLine();
                 int selection = 1;
                 if (Int32.TryParse(input, out int i)) { selection = Math.Clamp(i, 1, 3); }
@@ -43,5 +47,7 @@
                 }             
             }
         }
+
+        
     }
 }
