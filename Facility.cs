@@ -19,6 +19,8 @@ namespace CodingChallenge
                 input = Console.ReadLine() ?? "no";
                 if (input.ToLower() == "yes")
                     DialogueHandler.Tutorial();
+                else { Console.WriteLine($"I don't think I need a tutorial."); Console.ReadKey(); }
+
             }
             
             Console.Clear();
@@ -37,15 +39,10 @@ namespace CodingChallenge
                 Console.WriteLine($"   My levels of {reagent.name} are {amountDescription[descriptionValue]}.");
             }
 
-            int temperatrus = infoStore.reagent[0].quantity;
-            int irascribilis = infoStore.reagent[0].quantity;
-            int intelligentia = infoStore.reagent[0].quantity;
-            int chaos = infoStore.reagent[0].quantity;
-
             Console.WriteLine("\n I should choose which catalyst to set:\n");
             for (int j = 0; j < infoStore.catalysts.Count; j++)
             {
-                Console.WriteLine($"{j + 1} - {infoStore.catalysts[j].name}");
+                Console.WriteLine($" {j + 1} - {infoStore.catalysts[j].name}");
             }
 
             int choice = 0;
@@ -92,7 +89,7 @@ namespace CodingChallenge
 
                 Console.WriteLine($"\n\n In front of me I see three gauges. Under these gauges I can see three valves. To my right there is a lever.\n I should select my next step:\n    ");
 
-                loopChoice = ConsoleHelper.MultipleChoice(false, true, 24, steps);
+                loopChoice = ConsoleHelper.MultipleChoice(false, 24, steps);
 
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"\n\nI have chosen to {steps[loopChoice]}.");

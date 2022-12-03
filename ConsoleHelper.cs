@@ -6,18 +6,12 @@ namespace CodingChallenge
     {
         public class ConsoleHelper
         {
-            public static int MultipleChoice(bool canCancel, bool variableSpacing, int spacing, params string[] options)
+            public static int MultipleChoice(bool canCancel, int spacing, params string[] options)
             {
                 (int startX, int startY) = Console.GetCursorPosition();
                 const int optionsPerLine = 5;
-                 int spacingPerLine = spacing;
-                //int variableSpacingPerLine = (options.OrderByDescending(s => s.Length).First()).Length; //added
-
+                int spacingPerLine = spacing;
                 int currentSelection = 0;
-
-                //int spacingChoice;
-                //if (variableSpacing) { spacingChoice = variableSpacingPerLine; }
-                //else { spacingChoice = spacingPerLine; }
 
                 ConsoleKey key;
 

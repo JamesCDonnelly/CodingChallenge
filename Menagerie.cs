@@ -55,7 +55,7 @@ namespace CodingChallenge
 
                 string[] steps = new String[] { "Next", "Previous", "Rename", "Leave" };
                 int loopChoice = 0;
-                loopChoice = ConsoleHelper.MultipleChoice(true, true, 14, steps);
+                loopChoice = ConsoleHelper.MultipleChoice(true, 14, steps);
 
                 switch (loopChoice)
                 {

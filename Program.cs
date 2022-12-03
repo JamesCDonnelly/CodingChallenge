@@ -41,7 +41,7 @@ namespace CodingChallenge
                         break;
 
                     case 3:
-                        Console.WriteLine($"I think I will leave for now to recollect my thoughts.");
+                        Console.WriteLine($"\n    I think I will leave for now to recollect my thoughts.");
                         Console.ReadKey();
                         return;
                 }             

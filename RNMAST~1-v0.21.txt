@@ -1,0 +1,329 @@
+title RNMAST~1
+@echo off
+set /a debug=-1
+set /a sound=1
+set /a battles=1
+
+:preload
+if %debug% neq 1 mode 30,10
+
+set /a vX=9
+set /a vY=25
+set /a pX=5
+set /a pY=7
+
+set _name=Warrior
+set /a _level=1
+set /a _gold=0
+set _equip=nothing
+set inventoryBag=Torch Cheese
+
+set _status=nul
+set _eventCheck=0
+set /a encounter=0
+
+set event[0].xcoord=%pX%
+set event[0].ycoord=%pY%
+set event[0].character=@
+set event[0].description="The Player"
+set event[0].physical=0
+
+set event[1].xcoord=4
+set event[1].ycoord=5
+set event[1].character=O
+set event[1].description="An old man"
+set event[1].physical=0
+
+set event[2].xcoord=2
+set event[2].ycoord=3
+set event[2].character=i
+set event[2].description="A small child"
+set event[2].physical=0
+
+set event[3].xcoord=7
+set event[3].ycoord=8
+set event[3].character=W
+set event[3].description="Wall"
+set event[3].physical=1
+
+set event[4].xcoord=7
+set event[4].ycoord=9
+set event[4].character=W
+set event[4].description="Wall"
+set event[4].physical=1
+
+set event[5].xcoord=1
+set event[5].ycoord=17
+set event[5].character=S
+set event[5].description="Stream"
+set event[5].physical=1
+
+set event[6].xcoord=2
+set event[6].ycoord=17
+set event[6].character=S
+set event[6].description="Stream"
+set event[6].physical=1
+
+set event[7].xcoord=3
+set event[7].ycoord=18
+set event[7].character=S
+set event[7].description="Stream"
+set event[7].physical=1
+
+set event[8].xcoord=4
+set event[8].ycoord=18
+set event[8].character=S
+set event[8].description="Stream"
+set event[8].physical=1
+
+set event[9].xcoord=7
+set event[9].ycoord=10
+set event[9].character=W
+set event[9].description="Wall"
+set event[9].physical=1
+
+set /a arrLen=9
+
+:intro
+color 37
+if %sound% equ 1 start /min powershell -c (New-Object Media.SoundPlayer 'c:\windows\media\alarm03.wav').PlaySync();
+cls
+echo   v0.21
+echo/
+echo           RUN MASTER
+echo	             1987
+echo/
+echo     	  ~:Start:~
+echo/
+echo    =======================
+
+pause> nul
+echo/
+echo   Controls
+echo/
+echo     WASD  .... Movement
+echo        O  .... Toggle sound
+echo    Space  .... Enter Command
+echo        I  .... Inventory 
+echo   Commands: stats, talk, end    
+echo/
+pause> nul
+
+
+if %sound% equ 1 start /min powershell -c (New-Object Media.SoundPlayer 'c:\windows\media\Chimes.wav').PlaySync();
+
+
+:loop
+if %battles% equ 1 (
+	set /a encounter=%RANDOM% * 100 / 32768 + 1
+	if %debug% equ 1 echo Random Encounter Chance: %encounter%
+	if %encounter% gtr 90 call :battle
+)
+
+set /a col=%vY%
+set /a ln=%vX%+3
+cls
+title Field
+color 2f
+if %debug% neq 1 mode %col%,%ln%
+
+set /a _event=0
+setlocal enabledelayedexpansion
+for /L %%i in (1, 1, %vX%) do (
+	for /L %%j in (1, 1, %vY%) do (
+		for /L %%G IN (0 1 !arrLen!) do (
+			if !_event! neq 1 (
+				if %%i%%j equ !event[%%G].xcoord!!event[%%G].ycoord! (
+					set _event=1
+					set output=!output!!event[%%G].character!
+				)
+			) else (
+				if !event[%%G].xcoord!!event[%%G].ycoord! equ !event[0].xcoord!!event[0].ycoord! set _status=!event[%%G].description!
+			)
+		)
+			if !_event! equ 0 set output=!output!.
+			set _event=0
+	)
+	echo !output!
+	set output=
+)
+
+if !_status!==nul (
+	echo\ 
+) else ( 
+	echo !_status:~1,-1!
+)
+
+endlocal
+
+set _status=nul
+	
+set /P = <nul
+
+set /a _coordCheckN=%event[0].xcoord%-1
+set /a _coordCheckS=%event[0].xcoord%+1
+set /a _coordCheckE=%event[0].ycoord%+1
+set /a _coordCheckW=%event[0].ycoord%-1
+
+setlocal enabledelayedexpansion
+set /a _tempN=1
+set /a _tempS=1
+set /a _tempE=1
+set /a _tempW=1
+
+for /L %%G IN (0 1 !arrLen!) do (
+	if !event[%%G].physical! equ 1 (
+		if !_coordCheckN!!event[0].ycoord! equ !event[%%G].xcoord!!event[%%G].ycoord! set /a _tempN=0
+		if !_coordCheckS!!event[0].ycoord! equ !event[%%G].xcoord!!event[%%G].ycoord! set /a _tempS=0
+		if !event[0].xcoord!!_coordCheckE! equ !event[%%G].xcoord!!event[%%G].ycoord! set /a _tempE=0
+		if !event[0].xcoord!!_coordCheckW! equ !event[%%G].xcoord!!event[%%G].ycoord! set /a _tempW=0
+	)
+)
+(
+  endlocal
+	set "_passN=%_tempN%"
+	set "_passS=%_tempS%"
+	set "_passE=%_tempE%"
+	set "_passW=%_tempW%"
+)
+
+if %debug% equ 1 echo N %_passN% S %_passS% E %_passE% W %_passW%
+
+powershell "exit($Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown').VirtualKeyCode)"
+if %errorlevel% equ 87 (
+	if %_passN% equ 1 set /a event[0].xcoord=%event[0].xcoord%-1
+)
+if %errorlevel% equ 83 (
+	if %_passS% equ 1 set /a event[0].xcoord=%event[0].xcoord%+1
+)
+if %errorlevel% equ 65 (
+	if %_passW% equ 1 set /a event[0].ycoord=%event[0].ycoord%-1
+)
+if %errorlevel% equ 68 (
+	if %_passE% equ 1 set /a event[0].ycoord=%event[0].ycoord%+1
+)
+if %errorlevel% equ 79 set /a sound=%sound%*-1 & set _status="sound toggled"
+if %errorlevel% equ 80 set /a debug=%debug%*-1 & set _status="debug toggled"
+
+if %errorlevel% equ 32 call :command
+if %errorlevel% equ 27 call :stats
+if %errorlevel% equ 73 call :inventory
+if %errorlevel% equ 66 call :battle
+
+goto loop
+
+:exit
+exit
+
+:command
+	set /p input= Command:
+	if %input%==end goto exit
+	if %input%==talk goto talk
+	if %input%==stats goto stats
+	set _status="invalid command"
+    goto loop
+
+:talk
+if %event[0].xcoord%%event[0].ycoord% equ 45 (
+		title Old Man
+		color 0F
+		mode 50, 18
+		echo The old man says hello.
+		echo/
+		set /p="Say: "
+		echo He nods his head slowly,
+		echo but you can tell he isn't listening.
+		pause> nul
+		exit /b
+)
+if %event[0].xcoord%%event[0].ycoord% equ 23 (
+		title Small Child
+		color 0F
+		mode 50, 18
+		echo "Why is the sky blue?" The small child asks.
+		echo/
+		set /p="Say: "
+		echo "oh." they reply, with a confused expression.
+		pause> nul
+		exit /b
+)
+set _status="nobody here"
+exit /b
+
+:stats
+title Status
+color 0F
+mode 50, 18
+echo Player at: %event[0].xcoord%, %event[0].ycoord%
+echo event action:%_event%
+if %sound% equ 1 (echo Sound on ) else (echo Sound off)
+if %debug% equ 1 (echo Debug on ) else (echo Debug off)
+pause> nul
+exit /b
+
+:inventory
+title Inventory
+color 0F
+mode 50, 18
+echo %_name%
+echo Level: %_level%
+echo Gold: %_gold%
+echo Equipped: %_equip%
+echo =====================
+for %%i in (%inventoryBag%) do (
+echo %%i
+)
+pause> nul
+exit /b
+
+:battle
+if %sound% equ 1 start /min powershell -c (New-Object Media.SoundPlayer 'c:\windows\media\ir_begin.wav').PlaySync();
+title Battle
+color 0A
+mode 50, 18
+echo Ambushed!
+pause> nul
+echo .
+pause> nul
+echo ..
+pause> nul
+cls
+
+set mob[1].name=Nullman
+set /a mob[1].HP=100
+set /a mob[1].ATK=100
+set /a mob[1].DEF=100
+
+set mob[2].name=Nullman
+set /a mob[2].HP=100
+set /a mob[2].ATK=100
+set /a mob[2].DEF=100
+
+set mob[3].name=Nullman
+set /a mob[3].HP=100
+set /a mob[3].ATK=100
+set /a mob[3].DEF=100
+
+echo/
+set /a _mobLimit=%RANDOM% %% 3 + 1
+
+setlocal enabledelayedexpansion
+for /L %%G in (1, 1, %_mobLimit%) do (
+set /a mob[%%G].HP=!RANDOM! %% 100 + 1
+if !mob[%%G].HP! gtr 0 echo !mob[%%G].name! %%G		HP: !mob[%%G].HP!
+)
+(
+endlocal
+)
+
+echo/
+echo ------------------
+set /p try="Enter Command: "
+echo +                +
+echo +                +
+echo +                +
+echo +                +
+echo ------------------
+echo you win!
+pause> nul
+exit /b
