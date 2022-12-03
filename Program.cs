@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using static CodingChallenge.Program;
 
@@ -12,12 +13,13 @@ namespace CodingChallenge
         {
             InfoStore infoStore = new InfoStore();
             createCatalysts(infoStore);
+            createReagents(infoStore);
             Console.Title = "The marvellous Menagerie";
 
-            int temperatrus = 255;
-            int irascribilis = 255;
-            int intelligentia = 255;
-            int chaos = 255;
+            //int temperatrus = 255;
+            //int irascribilis = 255;
+            //int intelligentia = 255;
+            //int chaos = 255;
 
             while (true)
             {
@@ -25,20 +27,26 @@ namespace CodingChallenge
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Clear();
 
-                Console.WriteLine($"\nWhere should I go next?\n 1 - The Menagerie\n 2 - The Facility");
+                Console.WriteLine($"\nWhere should I go next?\n 1 - The Menagerie\n 2 - The Facility \n 3 - Leave");
                 string? input = Console.ReadLine();
                 int selection = 1;
-                if (Int32.TryParse(input, out int i)) { selection = Math.Clamp(i, 1, 2); }
+                if (Int32.TryParse(input, out int i)) { selection = Math.Clamp(i, 1, 3); }
 
                 switch(selection)
                 {
                     case 1:
                         Menagerie(infoStore);
                         break;
+
                     case 2:
-                        
-                        CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
+                        //CreatureCreator(temperatrus, irascribilis, intelligentia, chaos, infoStore);
+                        CreatureCreator(infoStore);
                         break;
+
+                    case 3:
+                        Console.WriteLine($"I think I will leave for now to recollect my thoughts.");
+                        Console.ReadKey();
+                        return;
                 }
                 //Console.WriteLine($"{selection}");
                 //Console.ReadKey();
@@ -83,7 +91,7 @@ namespace CodingChallenge
                                   $" Its {creature.sizes} {creature.colour} {creature.bodyParts} appears {creature.textures} and {creature.health}.\n\n" +
                                   $" It can detect other presences using its strong sense of {creature.senses}.");
                 Random rnd = new Random();
-                if (rnd.Next(1, 10) == 3)
+                if (rnd.Next(1, 7) == 3)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write($" It can detect you now.\n\n   ");
@@ -125,8 +133,10 @@ namespace CodingChallenge
 
         }
 
-        private static void CreatureCreator(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
+        private static void CreatureCreator(/*int temperatrus, int irascribilis, int intelligentia, int chaos, */InfoStore infoStore)
         {
+     
+
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
@@ -139,12 +149,34 @@ namespace CodingChallenge
 
 
             Console.WriteLine("Let's create a Creature.\n");
-            Console.WriteLine(  "   My levels of temperatrus are plentiful\n" +
-                                "   My levels of irascibilis are plentiful\n" +
-                                "   My levels of intelligentia are plentiful\n" +
-                                "   I have several quantities of chaos left.");
 
+            string[] amountDescription = new string[] {"exhusted", "poor", "middling", "adaquate", "plentiful", "brimming"};
+            foreach(Reagent reagent in infoStore.reagent)
+            {
+                int descriptionValue = 0;
+                if (reagent.quantity < 5) { descriptionValue = 0; }
+                else if (reagent.quantity == 255) { descriptionValue = 5; }
+                else
+                {
+                    descriptionValue = (int)Math.Ceiling((decimal)(reagent.quantity * 100 / 255) / 25);
+                    //Console.WriteLine($"{Math.Ceiling((decimal)(reagent.quantity * 100 / 255) / 25)}");
+                   
+                }
+                Console.WriteLine($"   My levels of {reagent.name} are {amountDescription[descriptionValue]}.");
+            }
 
+            int temperatrus = infoStore.reagent[0].quantity;
+            int irascribilis = infoStore.reagent[0].quantity;
+            int intelligentia = infoStore.reagent[0].quantity;
+            int chaos = infoStore.reagent[0].quantity;
+
+            /*
+            Console.WriteLine($"   My levels of temperatrus are {amountDescription[descriptionValue]}.\n" +
+                                $"   My levels of irascibilis are {amountDescription[descriptionValue]}.\n" +
+                                $"   My levels of intelligentia are {amountDescription[descriptionValue]}.\n" +
+                                $"   My levels of chaos are {amountDescription[descriptionValue]}.\n");
+
+            */
 
             Console.WriteLine("\n I should choose which catalyst to set:\n");
             for (int j = 0; j < infoStore.catalysts.Count; j++)
@@ -194,13 +226,18 @@ namespace CodingChallenge
             {
                 Console.Clear();
                 Console.WriteLine("\n current levels:");
-                Console.WriteLine($" temperatrus: {temperatrus * 100 / 255}%");
-                Console.WriteLine($" irascribilis: {irascribilis * 100 / 255}%");
-                Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
-                Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
+                Console.WriteLine(" ===============");
+                foreach (Reagent reagent in infoStore.reagent)
+                {
+                    Console.WriteLine($" {reagent.name}: {reagent.quantity * 100 / 255}%");
+                }
+                //Console.WriteLine($" temperatrus: {temperatrus * 100 / 255}%");
+                //Console.WriteLine($" irascribilis: {irascribilis * 100 / 255}%");
+                //Console.WriteLine($" intelligentia: {intelligentia * 100 / 255}%");
+                //Console.WriteLine($" chaos: {chaos * 100 / 255}%\n");
 
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(" [");
+                Console.Write("\n [");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write($"{infoStore.catalysts[choice].name}");
                 Console.ForegroundColor = ConsoleColor.White;
@@ -221,12 +258,21 @@ namespace CodingChallenge
 
                 loopChoice = ConsoleHelper.MultipleChoice(false, true, 24, steps);
 
-
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"\n\nI have chosen to {steps[loopChoice]}.");
 
                 Console.ReadKey();
 
-
+                
+                // Work in Progress
+                //int a = 0;
+                //int b = 0;
+                //int c = 0;
+                //int chemical = 0;
+                (int a, int b, int c) values = setGauges(x, y, z, loopChoice, choice, infoStore);
+                (x, y, z) = values;
+                //temperatrus = chemical;
+                /*/
 
                 //TODO revise into single method
 
@@ -265,6 +311,7 @@ namespace CodingChallenge
                     z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[3, 2]) * 20, 1, 255);
                     chaos -= 5;
                 }
+                /*/
 
             } while (loopChoice != 4);
 
@@ -324,6 +371,27 @@ namespace CodingChallenge
            // }
         }
 
+        private static (int x, int y, int z) setGauges(int x, int y, int z, int loopChoice, int choice, InfoStore infoStore)
+        {
+            if (loopChoice > 3) { return (x, y, z); }
+            //int chemical = infoStore.reagent[loopChoice].quantity;
+
+            if (infoStore.reagent[loopChoice].quantity < 5) 
+            { 
+                Console.WriteLine($"no more {infoStore.reagent[loopChoice].name} can be released."); 
+                Console.ReadKey();
+                return (x, y, z);
+            }
+            else
+            {
+                x = Math.Clamp(x + (infoStore.catalysts[choice].dataMap[loopChoice, 0]) * 20, 1, 255);
+                y = Math.Clamp(y + (infoStore.catalysts[choice].dataMap[loopChoice, 1]) * 20, 1, 255);
+                z = Math.Clamp(z + (infoStore.catalysts[choice].dataMap[loopChoice, 2]) * 20, 1, 255);
+                infoStore.reagent[loopChoice].quantity -= 5;
+                return (x, y, z);
+            }
+        }
+
         private static void drawGauge(int reading, char label)
         {
             int gaugeLength = 10; //control length of gauge and determines possible slider positions
@@ -351,7 +419,6 @@ namespace CodingChallenge
                 else
                     sb.Append(bar);
             }
-
             Console.WriteLine($"\n    I [{sb.ToString()}] II {label}");
         }
 
@@ -383,6 +450,46 @@ namespace CodingChallenge
                 this.description = description;
                 this.dataMap = dataMap;
             }
+
+        }
+
+        public class Reagent
+        {
+            public string name { get; } = "unknown reagent";
+            public int quantity { get; set; }
+
+            public Reagent(string name, int quantity)
+            {
+                this.name = name;
+                this.quantity = quantity;
+            }
+
+
+            
+        }
+
+
+        public static void createReagents(InfoStore infoStore) //(int temperatrus, int irascribilis, int intelligentia, int chaos, InfoStore infoStore)
+        {
+            string name = "Temperatrus";
+            int quantity = 255;
+            Reagent reagent = new Reagent(name, quantity);
+            infoStore.reagent.Add(reagent);
+
+            name = "Irascribilis";
+            quantity = 255;
+            reagent = new Reagent(name, quantity);
+            infoStore.reagent.Add(reagent);
+
+            name = "Intelligentia";
+            quantity = 255;
+            reagent = new Reagent(name, quantity);
+            infoStore.reagent.Add(reagent);
+
+            name = "Chaos";
+            quantity = 255;
+            reagent = new Reagent(name, quantity);
+            infoStore.reagent.Add(reagent);
 
         }
 
@@ -441,11 +548,13 @@ namespace CodingChallenge
         {
             public List<Creature> storedCreatures { get; set; }
             public List<Creature> wildCreatures { get; set; }
-
             public List<Catalyst> catalysts  {get; set;}
+
+            public List<Reagent> reagent { get; set; }
 
             public InfoStore()
             {
+                reagent= new List<Reagent>();
                 storedCreatures = new List<Creature>();
                 wildCreatures = new List<Creature>();
                 catalysts = new List<Catalyst>();
