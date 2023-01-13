@@ -14,6 +14,7 @@ namespace CodingChallenge
                 int currentSelection = 0;
 
                 ConsoleKey key;
+
                 Console.CursorVisible = false;
 
                 do
